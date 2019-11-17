@@ -1,0 +1,27 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+
+    implementation(
+        'org.glassfish.grizzly:grizzly-framework:2.4.4',
+        'org.glassfish.grizzly:grizzly-http:2.4.4',
+        'org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.5.1',
+        'io.netty:netty-all:4.1.43.Final',
+        'org.nanohttpd:nanohttpd:2.3.1'
+    )
+
+    api(
+        'org.apache.curator:curator-framework:4.2.0'
+    )
+
+    testCompile(
+        'junit:junit:4.12',
+    )
+
+}
