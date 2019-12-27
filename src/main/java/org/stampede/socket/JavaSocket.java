@@ -1,8 +1,14 @@
 package org.stampede.socket;
 
 import java.net.*;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -10,104 +16,95 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+
 import java.io.*;
 
 public class JavaSocket extends AbstractSocket implements AutoCloseable {
 
-    public JavaSocket(int port) {
-        super(port);
-        // TODO Auto-generated constructor stub
-    }
+	public JavaSocket() throws IOException, InterruptedException {
+		try {
+			if (SSL) {
+				setupSSL();
+			}
+		} catch (GeneralSecurityException e) {
 
-    static final String HTTP = "HTTP/1.1 ";
+		}
+		if (serverSocket == null) {
+			serverSocket = new ServerSocket(PORT);
+		}
+	}
 
-    static final String S200 = "200 Ok\r\n\r\n";
+	private ServerSocket serverSocket;
+	private Socket clientSocket;
+	private PrintWriter out;
+	private BufferedReader in;
+	ConcurrentLinkedQueue<ServerSocket> servers;
+	// boolean state = false;
 
-    static final String G503 = "503 Service Unavailable\r\n\r\n";
+	@Override
+	public boolean serve() throws IOException {
+		clientSocket = serverSocket.accept();
+		clientSocket.getOutputStream().write(OK);
+		getPath(clientSocket.getInputStream()); // TODO: do something with the path
+		clientSocket.close();
+		return true;
+	}
 
-    private ServerSocket serverSocket;
-    private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
-    ConcurrentLinkedQueue<ServerSocket> servers;
-    // boolean state = false;
+	@Override
+	public void close() throws IOException {
+		if (in != null)
+			in.close();
+		if (out != null)
+			out.close();
+		if (clientSocket != null)
+			clientSocket.close();
+		if (serverSocket != null)
+			serverSocket.close();
+	}
 
-    @Override
-    public void start() throws IOException {
-        try {
-            if (SSL) {
-                setupSSL();
-            } else {
-                serverSocket = new ServerSocket(port);
-            }
-        } catch (GeneralSecurityException e) {
-            // todo SSL task
-            serverSocket = new ServerSocket(port);
-        }
-    }
+	private KeyStore getKeyStore() throws GeneralSecurityException, IOException {
+		File file;
 
-    @Override
-    public boolean serve() throws IOException {
-        clientSocket = serverSocket.accept();
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        out.print(HTTP);
-        out.print(S200);
-        clientSocket.close();
-        return true;
-    }
+		KeyStore keystore = KeyStore.getInstance(KEYSTORE_TYPE);
 
-    @Override
-    public void close() throws IOException {
-        in.close();
-        out.close();
-        clientSocket.close();
-        serverSocket.close();
-    }
+		file = new File(KEYSTORE_FILE);
+		if (file.exists()) {
+			keystore.load(new FileInputStream(file), KEYSTORE_PASSWORD.toCharArray());
+		} else {
+			keystore.load(null, null);
+			keystore.store(new FileOutputStream(file), KEYSTORE_PASSWORD.toCharArray());
+		}
 
-    private KeyStore getKeyStore() throws GeneralSecurityException, IOException {
-        File file;
+		return keystore;
+	}
 
-        KeyStore keystore = KeyStore.getInstance(KEYSTORE_TYPE);
+	private void setupSSL() throws IOException, GeneralSecurityException {
 
-        file = new File(KEYSTORE_FILE);
-        if (file.exists()) {
-            keystore.load(new FileInputStream(file), KEYSTORE_PASSWORD.toCharArray());
-        } else {
-            keystore.load(null, null);
-            keystore.store(new FileOutputStream(file), KEYSTORE_PASSWORD.toCharArray());
-        }
+		String KEYSTORE_PASSWORD = System.getProperty("javax.net.ssl.keyStorePassword", "changeit");
+		KeyStore ks = getKeyStore();
+		ks.getCertificate("changeit");
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+		kmf.init(ks, KEYSTORE_PASSWORD.toCharArray());
 
-        return keystore;
-    }
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+		tmf.init(ks);
 
-    private void setupSSL() throws IOException, GeneralSecurityException {
+		SSLContext sc = SSLContext.getInstance("TLSv1");
 
-        String KEYSTORE_PASSWORD = System.getProperty("javax.net.ssl.keyStorePassword", "changeit");
-        KeyStore ks = getKeyStore();
-        ks.getCertificate("changeit");
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-        kmf.init(ks, KEYSTORE_PASSWORD.toCharArray());
+		TrustManager[] trustManagers = tmf.getTrustManagers();
+		sc.init(kmf.getKeyManagers(), trustManagers, null);
 
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-        tmf.init(ks);
+		SSLServerSocketFactory ssf = sc.getServerSocketFactory();
 
-        SSLContext sc = SSLContext.getInstance("TLSv1");
+		ServerSocket s = ssf.createServerSocket(PORT);
 
-        TrustManager[] trustManagers = tmf.getTrustManagers();
-        sc.init(kmf.getKeyManagers(), trustManagers, null);
+		SSLSocket c = (SSLSocket) s.accept();
+		c.startHandshake();
 
-        SSLServerSocketFactory ssf = sc.getServerSocketFactory();
+		out = new PrintWriter(c.getOutputStream(), true);
+		in = new BufferedReader(new InputStreamReader(c.getInputStream()));
 
-        ServerSocket s = ssf.createServerSocket(port);
-
-        SSLSocket c = (SSLSocket) s.accept();
-        c.startHandshake();
-
-        out = new PrintWriter(c.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(c.getInputStream()));
-
-        out.print(HTTP);
-        out.print(S200);
-        c.close();
-    }
+		out.print(OK);
+		c.close();
+	}
 }

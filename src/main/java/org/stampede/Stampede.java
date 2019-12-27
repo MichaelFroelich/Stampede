@@ -39,8 +39,8 @@ public class Stampede implements AutoCloseable {
             }
             
             Constructor<?> socketConstructor = Class.forName(socketName)
-                                                       .getDeclaredConstructor(int.class);
-            socket = (AbstractSocket) socketConstructor.newInstance(1024);
+                                                       .getDeclaredConstructor();
+            socket = (AbstractSocket) socketConstructor.newInstance();
             return socket;
         } catch (Exception e) {
             throw new IOException("Couldn't instantiate " + SOCKET_IMPLEMENTATION, e);
