@@ -10,9 +10,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stampede.Util;
 
 public abstract class AbstractSocket {
 
@@ -23,20 +26,21 @@ public abstract class AbstractSocket {
 	protected static final String G503 = "503 Service Unavailable\r\n\r\n";
 	protected static final byte[] OK = (HTTP + S200).getBytes();
 	protected static final byte[] NOTOK = (HTTP + G503).getBytes();
-	private static final int MAX = 512;
 	private static final int SPACEBYTE = (int) " ".getBytes()[0];
 	private static final int SLASHBYTE = (int) "/".getBytes()[0];
 	private static final int PERCENTBYTE = (int) "%".getBytes()[0];
-
+	private volatile boolean stopped;
+	private Object lock = new Object();
+	protected ExecutorService executor;
 
 	// Do not make these static as we'd like them initiated just before
 	// instantiation
-	protected boolean SSL = System.getProperty("ssl") != null;
-	protected int PORT = Integer.parseInt(System.getProperty("port", "1024"));
-	protected String HOST = System.getProperty("ip", DEFAULT_IP);
-	protected String KEYSTORE_FILE = System.getProperty("javax.net.ssl.keyStore", ".keystore");
-	protected String KEYSTORE_TYPE = System.getProperty("javax.net.ssl.keyStoreType", "JKS");
-	protected String KEYSTORE_PASSWORD = System.getProperty("javax.net.ssl.keyStorePassword", "changeit");
+	protected boolean SSL = Util.safeGetBooleanSystemProperty("ssl");
+	protected int PORT = Integer.parseInt(Util.safeGetSystemProperty("port", "1024"));
+	protected String HOST = Util.safeGetSystemProperty("ip", DEFAULT_IP);
+	protected String KEYSTORE_FILE = Util.safeGetSystemProperty("javax.net.ssl.keyStore", ".keystore");
+	protected String KEYSTORE_TYPE = Util.safeGetSystemProperty("javax.net.ssl.keyStoreType", "JKS");
+	protected String KEYSTORE_PASSWORD = Util.safeGetSystemProperty("javax.net.ssl.keyStorePassword", "changeit");
 
 	private static String DEFAULT_IP = getLocalHostLANAddress();
 
@@ -44,10 +48,40 @@ public abstract class AbstractSocket {
 	}
 
 	public final void start() throws IOException, InterruptedException {
-		new ServerRunner(this).run();
+		logger.info("Starting a " + this.getClass().getSimpleName() + " listening on " + HOST + ":" + PORT);
+		executor = Executors.newCachedThreadPool();
+		Runnable job = new Runnable() {
+			@Override
+			public void run() {
+				synchronized (lock) {
+					while (!stopped && !Thread.currentThread().isInterrupted()) {
+						try {
+							if (!serve()) { // If the current implementation is non blocking
+								lock.wait();
+							}
+						} catch (Exception ex) {
+							logger.error("Listening thread failed for " + this.getClass().getSimpleName());
+							Thread.currentThread().interrupt();
+						}
+					}
+				}
+			}
+		};
+		executor.execute(job);
 	}
 
-	public abstract void close() throws IOException;
+	public final void stop() throws IOException {
+		logger.info("Closing " + this.getClass().getSimpleName() + " listening on " + HOST + ":" + PORT);
+		close();
+		synchronized (lock) {
+			stopped = true;
+			lock.notify();
+		}
+		executor.shutdownNow();
+		logger.info("Closed " + this.getClass().getSimpleName());
+	}
+
+	protected abstract void close() throws IOException;
 
 	/**
 	 * Requests that the socket implementation begins serving
@@ -74,36 +108,33 @@ public abstract class AbstractSocket {
 		}
 		return "";
 	}
-	
+
 	static String getPath(InputStream inputStream) throws IOException {
 		byte[] bytes = new byte[100];
 		inputStream.read(bytes, 0, bytes.length);
-		
+
 		int pathindex = -1;
-		for(int i = 0 ; i < 100 ; i++) {
-			if(bytes[i] == SLASHBYTE) {
+		for (int i = 0; i < 100; i++) {
+			if (bytes[i] == SLASHBYTE) {
 				pathindex = i;
 				break;
 			}
 		}
-		
+
 		int endindex = -1;
-		for(int i = pathindex + 1 ; i < 100 ; i++) {
-			if(bytes[i] == SPACEBYTE) {
+		for (int i = pathindex + 1; i < 100; i++) {
+			if (bytes[i] == SPACEBYTE) {
 				endindex = i - 1;
 				break;
 			}
 		}
-		
+
 		byte[] outputbytes = new byte[endindex - pathindex];
 		int j = 0;
-		for(int i = pathindex + 1 ; i <= endindex ; i++) {
-			if(bytes[i] == PERCENTBYTE) {
-				char[] chararray = new char[] {
-						(char)bytes[++i] , 
-						(char)bytes[++i]
-				};
-				outputbytes[j++] = ((byte) Integer.parseInt(new String(chararray),16));
+		for (int i = pathindex + 1; i <= endindex; i++) {
+			if (bytes[i] == PERCENTBYTE) {
+				char[] chararray = new char[] { (char) bytes[++i], (char) bytes[++i] };
+				outputbytes[j++] = ((byte) Integer.parseInt(new String(chararray), 16));
 			} else {
 				outputbytes[j++] = bytes[i];
 			}

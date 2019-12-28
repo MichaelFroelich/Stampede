@@ -22,7 +22,7 @@ import org.junit.Test;
  */
 public class SocketTest {
 
-	static int runItteration = 50;
+	static int runItteration = 10;
 
 	static int port = 1024;
 
