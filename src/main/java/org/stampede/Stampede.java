@@ -3,14 +3,19 @@ package org.stampede;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stampede.socket.AbstractSocket;
 import org.stampede.socket.GrizzlySocket;
 import org.stampede.socket.JavaSocket;
+import org.stampede.socket.JeroSocket;
 import org.stampede.socket.NanoSocket;
 import org.stampede.socket.NettySocket;
 
 
 public class Stampede implements AutoCloseable {
+	
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     protected String SOCKET_IMPLEMENTATION = System.getProperty("stampede.socket","java");
     
@@ -21,7 +26,7 @@ public class Stampede implements AutoCloseable {
         if(socket != null) {
             return socket;
         }
-        
+        logger.info("Instantiating a socket with a " + SOCKET_IMPLEMENTATION + " implementation");
         try {
             switch(SOCKET_IMPLEMENTATION.toLowerCase()) {
                 case "java":
@@ -36,6 +41,10 @@ public class Stampede implements AutoCloseable {
                 case "netty":
                     socketName = NettySocket.class.getCanonicalName();
                     break;
+                case "zeromq":
+                case "jeromq":
+                	socketName = JeroSocket.class.getCanonicalName();
+                    break;
             }
             
             Constructor<?> socketConstructor = Class.forName(socketName)
@@ -43,12 +52,13 @@ public class Stampede implements AutoCloseable {
             socket = (AbstractSocket) socketConstructor.newInstance();
             return socket;
         } catch (Exception e) {
+        	logger.error("Couldn't instantiate " + SOCKET_IMPLEMENTATION + " because " + e.getMessage()); 
             throw new IOException("Couldn't instantiate " + SOCKET_IMPLEMENTATION, e);
         }
     }
 
     @Override
     public void close() throws Exception {
-        getClientSocket().close();
+        getClientSocket().stop();
     }
 }

@@ -15,7 +15,7 @@ public class JeroSocket extends AbstractSocket {
 	public JeroSocket() throws IOException, InterruptedException {
 		ctx = new ZContext();
 		stream = ctx.createSocket(SocketType.STREAM);
-		stream.bind("tcp://*:" + PORT);
+		stream.bind("tcp://" + HOST + ":" + PORT);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class JeroSocket extends AbstractSocket {
 	}
 
 	@Override
-	public void close() throws IOException {
+	protected void close() throws IOException {
 		ctx.close();
 	}
 }

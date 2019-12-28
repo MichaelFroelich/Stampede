@@ -38,7 +38,7 @@ public class NanoSocket extends AbstractSocket {
 	}
 
 	@Override
-	public void close() throws IOException {
+	protected void close() throws IOException {
 		server.stop();
 	}
 

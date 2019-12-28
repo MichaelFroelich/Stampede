@@ -28,7 +28,7 @@ public class GrizzlySocket extends AbstractSocket {
 	Object mutex = new Object();
 	 
     public GrizzlySocket() throws IOException, InterruptedException {
-        URI baseUri = UriBuilder.fromUri("http://0.0.0.0/").port(PORT).build();
+        URI baseUri = UriBuilder.fromUri("http://" + HOST + "/").port(PORT).build();
 
         ResourceConfig config = new ResourceConfig(GrizzlyController.class);
 
@@ -47,7 +47,7 @@ public class GrizzlySocket extends AbstractSocket {
     }
     
     @Override
-    public void close() throws IOException {
+    protected void close() throws IOException {
     	synchronized (mutex) {
         	server.shutdownNow();
 		}

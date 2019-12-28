@@ -126,7 +126,7 @@ public final class NettySocket extends AbstractSocket {
 	}
 
 	@Override
-	public void close() throws IOException {
+	protected void close() throws IOException {
 		try {
 			f.channel().close().await();
 		} catch (InterruptedException e) {

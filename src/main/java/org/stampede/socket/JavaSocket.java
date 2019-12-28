@@ -19,7 +19,7 @@ import javax.net.ssl.TrustManagerFactory;
 
 import java.io.*;
 
-public class JavaSocket extends AbstractSocket implements AutoCloseable {
+public class JavaSocket extends AbstractSocket {
 
 	public JavaSocket() throws IOException, InterruptedException {
 		try {
@@ -39,19 +39,28 @@ public class JavaSocket extends AbstractSocket implements AutoCloseable {
 	private PrintWriter out;
 	private BufferedReader in;
 	ConcurrentLinkedQueue<ServerSocket> servers;
-	// boolean state = false;
 
 	@Override
 	public boolean serve() throws IOException {
 		clientSocket = serverSocket.accept();
-		clientSocket.getOutputStream().write(OK);
-		getPath(clientSocket.getInputStream()); // TODO: do something with the path
-		clientSocket.close();
+		Runnable job = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					clientSocket.getOutputStream().write(OK);
+					getPath(clientSocket.getInputStream()); // TODO: do something with the path
+					clientSocket.close();
+				} catch (IOException e) {
+					logger.error("Java Socket error: " + e.getMessage());
+				}
+			}
+		};
+		executor.execute(job);
 		return true;
 	}
 
 	@Override
-	public void close() throws IOException {
+	protected void close() throws IOException {
 		if (in != null)
 			in.close();
 		if (out != null)
