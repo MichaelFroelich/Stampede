@@ -11,9 +11,9 @@ public class Util {
         if (key == null)
             throw new IllegalArgumentException("null input");
 
-        String result = null;
+        String result = defaultValue;
         try {
-            result = System.getProperty(key);
+            result = System.getProperty(key, defaultValue);
         } catch (java.lang.SecurityException sm) {
             ; // ignore
         }
@@ -21,7 +21,7 @@ public class Util {
     }
 
     public static boolean safeGetBooleanSystemProperty(String key) {
-        String value = safeGetSystemProperty(key);
+        String value = safeGetSystemProperty(key, "false");
         if (value == null)
             return false;
         else
