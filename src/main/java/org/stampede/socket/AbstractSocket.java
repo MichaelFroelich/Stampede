@@ -33,16 +33,13 @@ public abstract class AbstractSocket {
 	private Object lock = new Object();
 	protected ExecutorService executor;
 
-	// Do not make these static as we'd like them initiated just before
-	// instantiation
-	protected boolean SSL = Util.safeGetBooleanSystemProperty("ssl");
-	protected int PORT = Integer.parseInt(Util.safeGetSystemProperty("port", "1024"));
-	protected String HOST = Util.safeGetSystemProperty("ip", DEFAULT_IP);
-	protected String KEYSTORE_FILE = Util.safeGetSystemProperty("javax.net.ssl.keyStore", ".keystore");
-	protected String KEYSTORE_TYPE = Util.safeGetSystemProperty("javax.net.ssl.keyStoreType", "JKS");
-	protected String KEYSTORE_PASSWORD = Util.safeGetSystemProperty("javax.net.ssl.keyStorePassword", "changeit");
-
-	private static String DEFAULT_IP = getLocalHostLANAddress();
+	// Do not make these static as we'd like them initiated after config is loaded
+	protected final boolean SSL = Util.safeGetBooleanSystemProperty("ssl");
+	protected final int PORT = Integer.parseInt(Util.safeGetSystemProperty("port", "1024"));
+	protected final String HOST = Util.safeGetSystemProperty("ip", getLocalHostLANAddress());
+	protected final String KEYSTORE_FILE = Util.safeGetSystemProperty("javax.net.ssl.keyStore", ".keystore");
+	protected final String KEYSTORE_TYPE = Util.safeGetSystemProperty("javax.net.ssl.keyStoreType", "JKS");
+	protected final String KEYSTORE_PASSWORD = Util.safeGetSystemProperty("javax.net.ssl.keyStorePassword", "changeit");
 
 	public AbstractSocket() throws IOException, InterruptedException {
 	}
@@ -50,6 +47,7 @@ public abstract class AbstractSocket {
 	public final void start() throws IOException, InterruptedException {
 		logger.info("Starting a " + this.getClass().getSimpleName() + " listening on " + HOST + ":" + PORT);
 		executor = Executors.newCachedThreadPool();
+		
 		Runnable job = new Runnable() {
 			@Override
 			public void run() {
@@ -67,7 +65,7 @@ public abstract class AbstractSocket {
 				}
 			}
 		};
-		executor.execute(job);
+		new Thread(job).start(); //As this thread is ideally long running, it shall remain dedicated
 	}
 
 	public final void stop() throws IOException {

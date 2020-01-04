@@ -1,6 +1,6 @@
-package org.stampede.socket.grizzly;
+package org.stampede.socket;
 
-import javax.inject.Singleton;
+import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -9,21 +9,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/")
-@Singleton
-public class GrizzlyController {
-
-    /**
-     * Constructor
-     */
-    public GrizzlyController() {
-    }
-    
-    @Path("/{path}")
+public class Controller {
+	
+    @Path("/{role}")
     @GET
     @Consumes({
         MediaType.APPLICATION_JSON
     })
-    public Response sayHi(@PathParam("path") String path) {
+    public Response sayHi(@PathParam("role") String role) {
         return Response.ok().build();
     }
 }

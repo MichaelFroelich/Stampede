@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stampede.config.ConfigListener;
 import org.stampede.socket.AbstractSocket;
 import org.stampede.socket.GrizzlySocket;
 import org.stampede.socket.JavaSocket;
@@ -12,16 +13,20 @@ import org.stampede.socket.JeroSocket;
 import org.stampede.socket.NanoSocket;
 import org.stampede.socket.NettySocket;
 
-
-public class Stampede implements AutoCloseable {
+public class Stampede implements AutoCloseable, ConfigListener {
 	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    protected String SOCKET_IMPLEMENTATION = System.getProperty("stampede.socket","java");
+    protected final String SOCKET_IMPLEMENTATION = Util.safeGetSystemProperty("stampede.socket","java");
     
     AbstractSocket socket;
     
-    private AbstractSocket getClientSocket() throws IOException {
+    public Stampede() {
+    	
+    }
+    
+    protected AbstractSocket getClientSocket() throws IOException {
+
         String socketName = SOCKET_IMPLEMENTATION;
         if(socket != null) {
             return socket;
@@ -55,6 +60,10 @@ public class Stampede implements AutoCloseable {
         	logger.error("Couldn't instantiate " + SOCKET_IMPLEMENTATION + " because " + e.getMessage()); 
             throw new IOException("Couldn't instantiate " + SOCKET_IMPLEMENTATION, e);
         }
+    }
+    
+    public void start() throws Exception {
+    	getClientSocket().start();
     }
 
     @Override

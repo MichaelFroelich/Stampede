@@ -19,18 +19,18 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stampede.socket.grizzly.GrizzlyController;
 
 public class GrizzlySocket extends AbstractSocket {
 	
 	HttpServer server;
 	
-	Object mutex = new Object();
+	Object mutex;
 	 
     public GrizzlySocket() throws IOException, InterruptedException {
+    	mutex = new Object();
         URI baseUri = UriBuilder.fromUri("http://" + HOST + "/").port(PORT).build();
 
-        ResourceConfig config = new ResourceConfig(GrizzlyController.class);
+        ResourceConfig config = new ResourceConfig(Controller.class);
 
         server = GrizzlyHttpServerFactory.createHttpServer(baseUri, config, false);
 
