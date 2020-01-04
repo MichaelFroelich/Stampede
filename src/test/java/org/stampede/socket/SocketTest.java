@@ -8,10 +8,10 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -115,7 +115,7 @@ public class SocketTest {
 		new Thread(new Runnable() {
 		    public void run () {
 		        try {
-		        	for(byte b : chinese.getBytes())
+		        	for(byte b : chinese.getBytes(StandardCharsets.UTF_8))
 		        		out.write(b);
 		        }
 		        catch (IOException e) {
