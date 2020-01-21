@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.ws.rs.core.Response;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stampede.Util;
@@ -30,6 +32,7 @@ public abstract class AbstractSocket {
 	private static final int SLASHBYTE = (int) "/".getBytes()[0];
 	private static final int PERCENTBYTE = (int) "%".getBytes()[0];
 	private volatile boolean stopped;
+	private Controller controller = null;
 	private Object lock = new Object();
 	protected ExecutorService executor;
 
@@ -47,7 +50,7 @@ public abstract class AbstractSocket {
 	public final void start() throws IOException, InterruptedException {
 		logger.info("Starting a " + this.getClass().getSimpleName() + " listening on " + HOST + ":" + PORT);
 		executor = Executors.newCachedThreadPool();
-		
+		controller = new Controller();
 		Runnable job = new Runnable() {
 			@Override
 			public void run() {
@@ -230,5 +233,9 @@ public abstract class AbstractSocket {
 			unknownHostException.initCause(e);
 			throw unknownHostException;
 		}
+	}
+	
+	protected Response control(String path) {
+		return controller.sayHi(path);
 	}
 }

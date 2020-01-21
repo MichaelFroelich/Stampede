@@ -47,8 +47,12 @@ public class JavaSocket extends AbstractSocket {
 			@Override
 			public void run() {
 				try {
+					
+					String path = getPath(clientSocket.getInputStream()); // TODO: do something with the path
+					control(path).toString();
+					
 					clientSocket.getOutputStream().write(OK);
-					getPath(clientSocket.getInputStream()); // TODO: do something with the path
+					
 					clientSocket.close();
 				} catch (IOException e) {
 					logger.error("Java Socket error: " + e.getMessage());

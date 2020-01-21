@@ -29,4 +29,11 @@ public interface RoleListener {
 	 * @param role
 	 */
 	public void onUnadvertise(String role);
+	
+	/**
+	 * Checks if this role is currently active
+	 * @param role
+	 * @return
+	 */
+	public boolean hasRole(String role);
 }

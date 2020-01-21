@@ -26,8 +26,9 @@ public class JeroSocket extends AbstractSocket {
 		while (request.length == 0 || Arrays.equals(request, handle)) {
 			request = stream.recv();
 		}
-		getPath(request); // TODO: do something with the path
-
+		String path = getPath(request); // TODO: do something with the path
+		control(path);
+		
 		// Send 200, I'm okay
 		stream.sendMore(handle);
 		stream.send(OK, ZMQ.DONTWAIT);

@@ -19,4 +19,6 @@ public class Controller {
     public Response sayHi(@PathParam("role") String role) {
         return Response.ok().build();
     }
+    
+    
 }
