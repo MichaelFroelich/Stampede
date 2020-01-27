@@ -5,10 +5,10 @@ import org.junit.Test;
 public class StampedeTest {
 
 	@Test
-	public void start() {
+	public void start() throws Exception {
 		Stampede stampede = new Stampede();
 		
-		
+		stampede.close();
 		
 	}
 }

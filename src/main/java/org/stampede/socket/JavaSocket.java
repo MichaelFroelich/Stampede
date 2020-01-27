@@ -1,14 +1,8 @@
 package org.stampede.socket;
 
 import java.net.*;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -49,7 +43,7 @@ public class JavaSocket extends AbstractSocket {
 				try {
 					
 					String path = getPath(clientSocket.getInputStream()); // TODO: do something with the path
-					control(path).toString();
+					control(path);
 					
 					clientSocket.getOutputStream().write(OK);
 					

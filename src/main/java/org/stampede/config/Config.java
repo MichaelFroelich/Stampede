@@ -1,5 +1,6 @@
 package org.stampede.config;
 
+import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Config {
@@ -14,11 +15,15 @@ public class Config {
 	}
 	
 	public Config(Object result, ConcurrentHashMap<String, Config> keyValuePairs) {
+		if(result instanceof File) {
+			//record stuff necessary for watching
+		}
+		
 		this.keyValuePairs = keyValuePairs;
 		this.result = result;
 	}
 	
-	public final Object getResult() {
+	public Object getResult() {
 		return result;
 	}
 	

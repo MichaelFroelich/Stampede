@@ -5,11 +5,8 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
-import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -235,7 +232,12 @@ public abstract class AbstractSocket {
 		}
 	}
 	
-	protected Response control(String path) {
-		return controller.sayHi(path);
+	protected byte[] control(String path) {
+		//controller.checkRole("role");
+		switch(path.charAt(0)) {
+			case '0':
+				break;
+		}
+		return null;
 	}
 }

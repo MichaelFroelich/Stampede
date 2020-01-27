@@ -1,19 +1,10 @@
 package org.stampede;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
-
-import org.slf4j.spi.SLF4JServiceProvider;
-
 public class Util {
 	
-	private static final String TESTNETTY = "io.netty.channel.ChannelInboundHandlerAdapter";
-	
-
 	public static boolean checkClass(String clazz) {
 		try {
-			Class cls = Class.forName(clazz);
+			Class.forName(clazz);
 			return true;
 		} catch (ClassNotFoundException e) {
 			return false;
@@ -44,13 +35,4 @@ public class Util {
 		else
 			return value.equalsIgnoreCase("true");
 	}
-	
-    private static List<SLF4JServiceProvider> findServiceProviders() {
-        ServiceLoader<SLF4JServiceProvider> serviceLoader = ServiceLoader.load(SLF4JServiceProvider.class);
-        List<SLF4JServiceProvider> providerList = new ArrayList<SLF4JServiceProvider>();
-        for (SLF4JServiceProvider provider : serviceLoader) {
-            providerList.add(provider);
-        }
-        return providerList;
-    }
 }

@@ -1,4 +1,4 @@
-package org.stampede.config;
+package org.stampede.config.location;
 
 /**
  * Please make your own
