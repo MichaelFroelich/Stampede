@@ -16,7 +16,7 @@ public enum Deserializer {
             SnakeYaml(Yaml),
             YamlBeans(Yaml),
         XML(null),
-        Properties(null),
+        Properties(null, null, null),
         CSV(null),
         	FasterCSV(CSV);
 	
@@ -56,16 +56,20 @@ public enum Deserializer {
 		else return false;
 	}
 	
-	IConfigDeserializer getInstance() throws InstantiationException, IllegalAccessException {
-		Deserializer[] children = children();
-		if(children.length != 0) {
-			for(Deserializer child : children) {
-				if(child.isActive())
-					return (IConfigDeserializer)child.getInstance();
+	IConfigDeserializer instance = null;
+	
+	public IConfigDeserializer getInstance() throws InstantiationException, IllegalAccessException {
+		if(instance == null) {
+			Deserializer[] children = children();
+			if(children.length != 0) {
+				for(Deserializer child : children) {
+					if(child.isActive())
+						instance = (IConfigDeserializer)child.getInstance();
+				}
+			} else {
+				instance = (IConfigDeserializer)implementation.newInstance();
 			}
-		} else {
-			return (IConfigDeserializer)implementation.newInstance();
 		}
-		return null;
+		return instance;
 	}
 }

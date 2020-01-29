@@ -1,7 +1,10 @@
 package org.stampede.config;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.zookeeper.server.UnimplementedRequestProcessor;
 
 public class Config {
 
@@ -29,5 +32,9 @@ public class Config {
 	
 	public final Config get(String root) {
 		return keyValuePairs.get(root);
+	}
+	
+	public HashMap<String, String> flatten() {
+		throw new RuntimeException("Not implemented");
 	}
 }

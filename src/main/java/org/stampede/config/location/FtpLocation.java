@@ -1,11 +1,10 @@
 package org.stampede.config.location;
 
-public class FtpLocation extends ConfigLocation {
+public class FtpLocation implements IConfigLocation {
 
-	@Override
-	public boolean watchChanges(String uri) {
+	public void watch(String uri) {
 		// TODO Auto-generated method stub
-		return false;
+		return;
 	}
 
 }

@@ -1,11 +1,10 @@
 package org.stampede.config.location;
 
-public class ZookeeperLocation extends ConfigLocation {
+public class ZookeeperLocation implements IConfigLocation {
 
-	@Override
-	public boolean watchChanges(String uri) {
+	public void watch(String uri) {
 		// TODO Auto-generated method stub
-		return false;
+		return;
 	}
 
 }

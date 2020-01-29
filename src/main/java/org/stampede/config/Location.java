@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.stampede.Util;
 import org.stampede.config.location.IConfigLocation;
+import org.stampede.config.location.LocalLocation;
 
 public enum Location {
 
@@ -15,8 +16,9 @@ public enum Location {
     Git(null),
     	JGit(Git),
     	JavaGit(Git),
-    Local(null),
+    Local(null, null, LocalLocation.class),
     ZooKeeper(null);
+	
 	private Location parent = null;
 	
 	private String checkingLibrary;

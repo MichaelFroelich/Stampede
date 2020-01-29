@@ -1,11 +1,10 @@
 package org.stampede.config.location;
 
-public class GitLocation extends ConfigLocation {
+public class GitLocation implements IConfigLocation {
 
-	@Override
-	public boolean watchChanges(String uri) {
+	public void watch(String uri) {
 		// TODO Auto-generated method stub
-		return false;
+		return;
 	}
 
 }

@@ -46,12 +46,7 @@ public abstract class AbstractConfig implements Closeable {
 					break;
 			}
 		} catch (Exception e) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("Horrible error, no: ");
-			for (String f : getAllResourcesUsed()) {
-				sb.append("\t").append(f).append("\n");
-			}
-			logger.error(sb.toString());
+
 		}
 
 	}
@@ -66,24 +61,6 @@ public abstract class AbstractConfig implements Closeable {
 		}
 
 		return null;
-	}
-
-	/**
-	 * for Logging reasons
-	 * 
-	 * @return
-	 */
-	private ArrayList<String> getAllResourcesUsed() {
-
-		Field[] fields = this.getClass().getFields();
-		ArrayList<String> toreturn = new ArrayList<String>(fields.length);
-		for (Field f : fields) {
-			if (!f.getType().isPrimitive() && f.getAnnotation(ConfigResource.class) != null) {
-				toreturn.add(f.getType().getSimpleName());
-			}
-			toreturn.add(f.toGenericString());
-		}
-		return toreturn;
 	}
 
 	protected InputStream openFolder(String pathDirectory) throws InterruptedException, IOException {

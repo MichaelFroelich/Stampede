@@ -65,7 +65,7 @@ public abstract class AbstractSocket {
 				}
 			}
 		};
-		new Thread(job).start(); //As this thread is ideally long running, it shall remain dedicated
+		executor.execute(job);
 	}
 
 	public final void stop() throws IOException {

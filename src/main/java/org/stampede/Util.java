@@ -35,4 +35,20 @@ public class Util {
 		else
 			return value.equalsIgnoreCase("true");
 	}
+	
+	public static String getCallingClassName() {
+		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+		int i = 1;
+		StackTraceElement e = stacktrace[i];
+		String className = getFinalLabel(e.getClassName());
+		while(className.equals(Stampede.class.getSimpleName()) || className.equals(Util.class.getSimpleName())) {
+			e = stacktrace[i++];
+			className = getFinalLabel(e.getClassName());
+		}
+		return className;
+	}
+	
+	public static String getFinalLabel(String fullyQualifiedName) {
+		return fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf('.') + 1).trim();
+	}
 }

@@ -2,16 +2,49 @@ package org.stampede;
 
 /**
  * A singleton factory class for getting instances
- * Kit; A quiet, active implementation
- * Pup; A loud, active implementation
- * Calf; A loud, passive implementation
- * Cub; A quiet, passive implementation
+ * Kit; A quiet, active implementation, only one instance per role with no config management
+ * Pup; A loud, active implementation, only one instance per role with config management
+ * Cub; A loud, passive implementation, multiple instance per role with config management
+ * Calf; A quiet, passive implementation, multiple instance per role with no config management
  * @author Michael
  */
 public final class Barn {
+	
+	private final Stampede stampede;
 
 	Barn(Stampede stampede) {
-		// TODO Auto-generated constructor stub
+		this.stampede = stampede;
 	}
 	
+	/**
+	 * A quiet, active implementation, only one instance per role with no config management
+	 * @return Kit
+	 */
+	public Object adoptKit() {
+		return null;
+	}
+	
+	/**
+	 * Pup; A loud, active implementation, only one instance per role with config management
+	 * @return Pup
+	 */
+	public Object adoptPup() {
+		return null;
+	}
+	
+	/**
+	 * Calf; A loud, passive implementation, multiple instance per role with config management
+	 * @return Calf
+	 */
+	public Object adoptCalf() {
+		return null;
+	}
+	
+	/**
+	 * Cub; A quiet, passive implementation, multiple instance per role with no config management
+	 * @return Cub
+	 */
+	public Object adoptCub() {
+		return null;
+	}
 }
