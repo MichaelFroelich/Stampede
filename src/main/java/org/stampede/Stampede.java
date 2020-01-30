@@ -5,9 +5,6 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -16,7 +13,6 @@ import org.stampede.config.Config;
 import org.stampede.config.Deserializer;
 import org.stampede.config.Socket;
 import org.stampede.config.deserializer.IConfigDeserializer;
-import org.stampede.config.deserializer.PropertiesDeserializer;
 import org.stampede.socket.AbstractSocket;
 
 public class Stampede implements AutoCloseable {
@@ -63,11 +59,11 @@ public class Stampede implements AutoCloseable {
 					Reader targetReader = Files.newBufferedReader(path, Charset.defaultCharset());
 					
 					Config config = deserialiser.load(targetReader);
-					
+					/*
 					for(Entry<String, String> property : config.flatten().entrySet()) {
 						System.setProperty(property.getKey(), property.getValue());
 					}
-					
+					*/
 					prop.load(targetReader);
 					System.setProperties(prop);
 					targetReader.close();

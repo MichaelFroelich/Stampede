@@ -17,7 +17,7 @@ public final class Barn {
 	}
 	
 	/**
-	 * A quiet, active implementation, only one instance per role with no config management
+	 * Kit; A quiet, active implementation, only one instance per role with no config management
 	 * @return Kit
 	 */
 	public Object adoptKit() {
@@ -33,18 +33,18 @@ public final class Barn {
 	}
 	
 	/**
-	 * Calf; A loud, passive implementation, multiple instance per role with config management
-	 * @return Calf
+	 * Cub; A loud, passive implementation, multiple instance per role with config management
+	 * @return Cub
 	 */
-	public Object adoptCalf() {
+	public Object adoptCub() {
 		return null;
 	}
 	
 	/**
-	 * Cub; A quiet, passive implementation, multiple instance per role with no config management
-	 * @return Cub
+	 * Calf; A quiet, passive implementation, multiple instance per role with no config management
+	 * @return Calf
 	 */
-	public Object adoptCub() {
+	public Object adoptCalf() {
 		return null;
 	}
 }

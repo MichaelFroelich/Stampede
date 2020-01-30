@@ -5,20 +5,27 @@ import java.util.List;
 
 import org.stampede.Util;
 import org.stampede.config.deserializer.IConfigDeserializer;
+import org.stampede.config.deserializer.json.*;
+import org.stampede.config.deserializer.csv.*;
+import org.stampede.config.deserializer.yaml.*;
 
 public enum Deserializer {
 
         Json(null),
-            FasterXML(Json),
-            Gson(Json),
+            JacksonJson(Json, null, JacksonJSONDeserializer.class),
+            Gson(Json, null, GsonDeserializer.class),
         Yaml(null),
-            JacksonYaml(Yaml),
-            SnakeYaml(Yaml),
-            YamlBeans(Yaml),
+            JacksonYaml(Yaml, null, JacksonYAMLDeserializer.class),
+            SnakeYaml(Yaml, null, SnakeYAMLDeserializer.class),
+            YAMLBeans(Yaml, null, YAMLBeansDeserializer.class),
         XML(null),
+        	JacksonXML(XML),
+        	SAX(XML),
         Properties(null, null, null),
         CSV(null),
-        	FasterCSV(CSV);
+        	StampedeCSV(CSV, null, StampedeCSVDeserializer.class),
+        	JacksonCSV(CSV, null, JacksonCSVDeserializer.class),
+        	CommonCSV(CSV, null, CommonCSVDeserializer.class);
 	
 	private Deserializer parent = null;
 	

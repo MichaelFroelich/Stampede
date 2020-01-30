@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.zookeeper.server.UnimplementedRequestProcessor;
-
 public class Config {
 
 	private Object result;
@@ -19,7 +17,7 @@ public class Config {
 	
 	public Config(Object result, ConcurrentHashMap<String, Config> keyValuePairs) {
 		if(result instanceof File) {
-			//record stuff necessary for watching
+			//record stuff necessary for watching and add to node list
 		}
 		
 		this.keyValuePairs = keyValuePairs;

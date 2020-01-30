@@ -1,16 +1,15 @@
-package org.stampede.config.deserialiser.json;
+package org.stampede.config.deserializer.yaml;
 
 import java.io.Reader;
 
 import org.stampede.config.Config;
 
-public class FasterJsonDeserializer extends JsonDeserializer {
+public class SnakeYAMLDeserializer extends YAMLDeserializer  {
 
 	@Override
 	public Config load(Reader path) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }

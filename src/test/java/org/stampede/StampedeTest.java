@@ -1,7 +1,6 @@
 package org.stampede;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.apache.zookeeper.server.ServerConfig;
@@ -14,7 +13,6 @@ public class StampedeTest {
 	public void start() throws Exception {
 		
 		File resourcesDirectory = new File("src/test/resources");
-		String whoami = "no one";
 		Properties startupProperties = new Properties();
 
 		/**
@@ -24,8 +22,11 @@ public class StampedeTest {
 		syncLimit=5
 		dataDir=/tmp/zookeeper
 		clientPort=2181
+		
+server.1=localhost:2888:3888
+server.2=localhost:2889:3889
+server.3=localhost:2890:3890
 		 */
-
 
 
 		QuorumPeerConfig quorumConfiguration = new QuorumPeerConfig();
@@ -47,14 +48,14 @@ public class StampedeTest {
 				}
 			}
 		}.start();
-
+/*
 		Stampede stampede = new Stampede(Paths.get("src/test/resources/stampede.properties"),"test");
 
 		Object puppy = stampede.getBarn().adoptPup();
 		
-		puppy.registerConfig("src/test/resources/common/","test");
+		puppy.registerConfig("src/test/resources/common/","test/v1");
 		puppy.getConfig().get("Whatever");
-		puppet.getState();
+		puppet.getState(role);
 		puppy.registerListener(new RoleListener() {
 			
 			@Override
@@ -89,6 +90,6 @@ public class StampedeTest {
 		});
 
 		stampede.close();
-
+*/
 	}
 }
