@@ -1,5 +1,6 @@
 package org.stampede.config;
 
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -7,11 +8,14 @@ import java.util.concurrent.TimeUnit;
 import org.stampede.config.deserializer.IConfigDeserializer;
 import org.stampede.config.location.IConfigLocation;
 
-public class ConfigFacade {
+/*
+ * Exists as a root of the Config tree
+ */
+public class ConfigFacade extends Config {
 	
 	IConfigDeserializer deserializer;
 	IConfigLocation location;
-	Config config;
+	ArrayList<Config> leafs = new ArrayList<Config>();
 	
 	public ConfigFacade(String path) {
 		if(path.startsWith("git")) {
@@ -37,9 +41,8 @@ public class ConfigFacade {
 		}, 0, 1, TimeUnit.SECONDS);  // execute every second
 	}
 
-	public Config get(String string) {
-		return config.get(string);
+	protected void addLeaf(Config config) { 
+		this.leafs.add(config);
 	}
-
 }
  

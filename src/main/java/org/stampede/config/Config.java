@@ -24,11 +24,24 @@ public class Config {
 	
 	public Config(Object result, ConcurrentHashMap<String, Config> keyValuePairs) {
 		if(result instanceof File) {
+			Config root = getRoot();
+			if(root instanceof ConfigFacade) {
+				ConfigFacade configFacade = (ConfigFacade) root;
+				configFacade.addLeaf(this);
+			}
 			//record stuff necessary for watching and add to node list
 		}
 		
 		this.keyValuePairs = keyValuePairs;
 		this.result = result;
+	}
+	
+	private Config getRoot() {
+		Config pointer = this.parent;
+		while(pointer != null && pointer.getParent() != null) {
+			pointer = pointer.getParent();
+		}
+		return pointer;
 	}
 	
 	public Object getResult() {
