@@ -7,6 +7,10 @@ import org.stampede.Util;
 import org.stampede.config.location.IConfigLocation;
 import org.stampede.config.location.LocalLocation;
 
+/**
+ * @author Michael
+ *
+ */
 public enum Location {
 
     FTP(null),

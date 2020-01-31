@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -31,15 +32,20 @@ public class Stampede implements AutoCloseable {
 	
 	private Config initConfig;
 
+	/**
+	 * Create an instance of Stampede
+	 * Assumes all configs are already loaded into the system properties
+	 */
 	public Stampede() {
 		this(null);
 	}
 
 
 	/**
+	 * Create an instance of Stampede
 	 * @param path to an initial configuration directory
 	 */
-	public Stampede(Path path) {
+	public Stampede(String path) {
 		if (init(path)) {
 			barn = new Barn(this);
 		} else
@@ -47,17 +53,15 @@ public class Stampede implements AutoCloseable {
 
 	}
 
-	private boolean init(Path path) {
+	private boolean init(String path) {
 		boolean success = true;
 		try {
 			String extension = Util.getFinalLabel(path.toString());
 			switch (extension){
 				case "properties":
 					IConfigDeserializer deserialiser = Deserializer.Properties.getInstance();
-
 					Properties prop = new Properties();
-					Reader targetReader = Files.newBufferedReader(path, Charset.defaultCharset());
-					
+					Reader targetReader = Files.newBufferedReader(Paths.get(path), Charset.defaultCharset());
 					Config config = deserialiser.load(targetReader);
 					/*
 					for(Entry<String, String> property : config.flatten().entrySet()) {

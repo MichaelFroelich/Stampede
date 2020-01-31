@@ -13,7 +13,10 @@ public class ConfigFacade {
 	IConfigLocation location;
 	Config config;
 	
-	public ConfigFacade() {
+	public ConfigFacade(String path) {
+		if(path.startsWith("git")) {
+			
+		}
 	}
 	
 	public ConfigFacade(Deserializer deserialiser, Location location, String path) throws InstantiationException, IllegalAccessException {
@@ -30,7 +33,6 @@ public class ConfigFacade {
 		ses.scheduleAtFixedRate(new Runnable() {
 		    @Override
 		    public void run() {
-		        // do some work
 		    }
 		}, 0, 1, TimeUnit.SECONDS);  // execute every second
 	}

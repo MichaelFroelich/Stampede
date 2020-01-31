@@ -7,12 +7,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Config {
 
 	private Object result;
+	
+	private Config parent;
 
 	ConcurrentHashMap<String, Config> keyValuePairs;
 	
 	public Config() {
 		keyValuePairs = null;
 		result = null;
+	}
+	
+	public Config(Object result, ConcurrentHashMap<String, Config> keyValuePairs, Config parent) {
+		this(result, keyValuePairs);
+		this.setParent(parent);
 	}
 	
 	public Config(Object result, ConcurrentHashMap<String, Config> keyValuePairs) {
@@ -28,6 +35,14 @@ public class Config {
 		return result;
 	}
 	
+	public Config getParent() {
+		return parent;
+	}
+
+	public void setParent(Config parent) {
+		this.parent = parent;
+	}
+
 	public final Config get(String root) {
 		return keyValuePairs.get(root);
 	}
