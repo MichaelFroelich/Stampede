@@ -27,5 +27,3 @@ dependencies {
     )
 
 }
-
-compileTestJava.options.encoding = 'UTF-8'
