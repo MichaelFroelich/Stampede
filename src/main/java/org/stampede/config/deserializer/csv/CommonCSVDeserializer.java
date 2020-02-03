@@ -11,7 +11,7 @@ import org.stampede.config.Config;
 public class CommonCSVDeserializer extends CSVDeserializer {
 
 	@Override
-	public Config load(Reader path) {
+	public Config load(Reader stream, Config root) {
 		return null;
 		// TODO Auto-generated method stub
 	}
