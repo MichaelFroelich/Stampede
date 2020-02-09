@@ -6,5 +6,10 @@ import org.stampede.config.Config;
 
 public interface IConfigDeserializer {
 
-	public Config load(Reader path);
+	/**
+	 * @param stream to a file containing the config
+	 * @param root config file
+	 * @return
+	 */
+	public Config load(Reader stream, Config root);
 }

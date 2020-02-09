@@ -7,7 +7,7 @@ import org.stampede.config.Config;
 public class JacksonJSONDeserializer extends JSONDeserializer {
 
 	@Override
-	public Config load(Reader path) {
+	public Config load(Reader stream, Config root) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,25 +1,23 @@
 package org.stampede;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
-import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.zookeeper.server.ServerConfig;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
 import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.stampede.config.Config;
+import org.stampede.config.ConfigMediator;
 import org.stampede.model.Role;
 import org.stampede.model.Status;
 
 public class StampedeTest {
 	
+	@Ignore
 	@Test
 	public void embeddedZookeeper() throws Exception {
 
@@ -66,13 +64,13 @@ server.3=localhost:2890:3890
 	public void start() throws Exception {
 		
 		// Initialize all stampede related stuff
-		Stampede stampede = new Stampede("src/test/resources/stampede.properties");
+		Stampede stampede = new Stampede("src/test/resources/common/test/stampede.properties");
 
 		// Create a stampede user instance that managers configs and performs role negotiation/election
 		Youngling puppy = stampede.getBarn().adoptPup();
 		
 		// Add our config folder and a pattern to generate roles from
-		puppy.registerConfig("src/test/resources/common/", Pattern.compile("test/v1/*"));
+		puppy.registerConfig(new ConfigMediator("src/test/resources/common/"), Pattern.compile("test/v1/*"));
 		
 		// Test that we can get the root of the 
 		Config c1 = puppy.getConfig().get("v1");

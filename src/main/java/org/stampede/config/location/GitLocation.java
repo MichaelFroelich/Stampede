@@ -1,10 +1,19 @@
 package org.stampede.config.location;
 
-public class GitLocation implements IConfigLocation {
+import java.nio.file.Path;
+import java.util.HashMap;
 
-	public void watch(String uri) {
+public abstract class GitLocation implements IConfigLocation {
+
+	public void register(String uri) {
 		// TODO Auto-generated method stub
 		return;
+	}
+
+	@Override
+	public HashMap<Path, FileEvent> poll() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

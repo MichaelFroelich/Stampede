@@ -8,7 +8,7 @@ import org.stampede.config.deserializer.IConfigDeserializer;
 import org.stampede.config.deserializer.json.*;
 import org.stampede.config.deserializer.csv.*;
 import org.stampede.config.deserializer.yaml.*;
-
+import org.stampede.config.deserializer.PropertiesDeserializer;
 public enum Deserializer {
 
         Json(null),
@@ -21,7 +21,7 @@ public enum Deserializer {
         XML(null),
         	JacksonXML(XML),
         	SAX(XML),
-        Properties(null, null, null),
+        Properties(null, null, PropertiesDeserializer.class),
         CSV(null),
         	StampedeCSV(CSV, null, StampedeCSVDeserializer.class),
         	JacksonCSV(CSV, null, JacksonCSVDeserializer.class),

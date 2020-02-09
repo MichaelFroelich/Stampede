@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -62,14 +62,10 @@ public class Stampede implements AutoCloseable {
 					IConfigDeserializer deserialiser = Deserializer.Properties.getInstance();
 					Properties prop = new Properties();
 					Reader targetReader = Files.newBufferedReader(Paths.get(path), Charset.defaultCharset());
-					Config config = deserialiser.load(targetReader);
-					/*
-					for(Entry<String, String> property : config.flatten().entrySet()) {
-						System.setProperty(property.getKey(), property.getValue());
+					initConfig = deserialiser.load(targetReader, new Config());
+					for(Entry<String, Object> property : initConfig.flatten().entrySet()) {
+						System.setProperty(property.getKey(), property.getValue().toString());
 					}
-					*/
-					prop.load(targetReader);
-					System.setProperties(prop);
 					targetReader.close();
 					break;
 
