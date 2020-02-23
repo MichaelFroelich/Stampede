@@ -30,14 +30,13 @@ import org.stampede.config.location.IConfigLocation;
 public class ConfigMediator extends Config implements AutoCloseable {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
 	private IConfigDeserializer deserializer;
 	private IConfigLocation location;
 	private ArrayList<Config> leafs = new ArrayList<Config>();
 	private ScheduledExecutorService ses;
 	private Path localPath;
 	private static final Pattern KEEPERPATTERN = Pattern.compile("\\.[a-z]*keep$");
-
+	
 	/**
 	 * 
 	 * @param path assuming it's a complete uri including a protocol
@@ -63,6 +62,7 @@ public class ConfigMediator extends Config implements AutoCloseable {
 	 * @param path         to the configurations
 	 */
 	public ConfigMediator(Deserializer deserialiser, Location location, String path) {
+		this.path = "";
 		if (location == null) {
 			location = findLocation(path);
 		}
@@ -199,6 +199,10 @@ public class ConfigMediator extends Config implements AutoCloseable {
 	protected void addLeaf(Config config) {
 		this.leafs.add(config);
 	}
+	
+	public Config[] getLeaves() {
+		return this.leafs.toArray(new Config[leafs.size()]);
+	}
 
 	public Path getLocalPath() {
 		return this.localPath;
@@ -225,5 +229,9 @@ public class ConfigMediator extends Config implements AutoCloseable {
 		if (pos == -1)
 			return str;
 		return str.substring(0, pos);
+	}
+
+	public Location getLocation() {
+		return location;
 	}
 }

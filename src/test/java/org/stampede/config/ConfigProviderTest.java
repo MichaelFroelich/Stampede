@@ -19,7 +19,7 @@ public class ConfigProviderTest {
 		ConfigMediator configProvider = new ConfigMediator(Deserializer.Properties, Location.Local,
 				"src/test/resources");
 		Config testConfig = configProvider.get("common").get("test");
-		String clientPort = (String) testConfig.get("stampede").get("clientPort").getResult();
+		String clientPort = (String) testConfig.get("stampede").get("configurationnumber").getResult();
 		assertEquals( "2181", clientPort);
 		String applicationName = (String) testConfig.get("stampede").get("application.version").getResult();
 		assertEquals("somename", applicationName);

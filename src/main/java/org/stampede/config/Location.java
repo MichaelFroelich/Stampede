@@ -59,6 +59,10 @@ public enum Location {
 		else return true;
 	}	
 	
+	public static Location getLocation (IConfigLocation iConfigLocation) {
+		
+	}
+	
 	IConfigLocation getInstance() throws InstantiationException, IllegalAccessException {
 		Location[] children = children();
 		if(children.length != 0) {

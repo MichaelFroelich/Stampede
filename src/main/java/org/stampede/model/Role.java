@@ -1,14 +1,24 @@
 package org.stampede.model;
 
+import org.stampede.Util;
 import org.stampede.config.Config;
 
 public class Role {
+	
+	String path;
 	
 	String name;
 	
 	Status state;
 	
 	Config config;
+
+	public Role(Config c) {
+		path = c.getPath();
+		name = Util.getFinalLabel(c.getPath());
+		state = Status.PASSIVE;
+		config = c;
+	}
 
 	public String getName() {
 		return name;

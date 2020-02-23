@@ -19,11 +19,12 @@ dependencies {
 
     api(
         'org.slf4j:slf4j-api:2.0.0-alpha1',
-        'org.apache.curator:curator-framework:4.2.0'
+        'org.apache.curator:curator-x-async:4.2.0'
     )
 
-    testCompile(
-        'junit:junit:4.12'
+    testImplementation(
+        'junit:junit:4.12',
+        'org.apache.curator:curator-test:4.2.0'
     )
 
 }

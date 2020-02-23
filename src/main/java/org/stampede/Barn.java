@@ -2,8 +2,10 @@ package org.stampede;
 
 import java.util.List;
 
+import org.stampede.youngling.Pup;
+
 /**
- * A factory class for getting instances
+ * A factory class for getting instances called a bairn
  * Kit; A quiet, active implementation, only one instance per role with no config management
  * Pup; A loud, active implementation, only one instance per role with config management
  * Cub; A loud, passive implementation, multiple instance per role with config management
@@ -13,13 +15,14 @@ import java.util.List;
 public final class Barn {
 	
 	private final Stampede stampede;
+	private List<Youngling> all;
 
 	Barn(Stampede stampede) {
 		this.stampede = stampede;
 	}
 	
-	public static List<Youngling> all() {
-		return null;
+	public List<Youngling> all() {
+		return this.all;
 	}
 	
 	/**
@@ -35,7 +38,9 @@ public final class Barn {
 	 * @return Pup
 	 */
 	public Youngling adoptPup() {
-		return null;
+		Youngling y = new Pup(stampede);
+		all.add(y);
+		return y;
 	}
 	
 	/**

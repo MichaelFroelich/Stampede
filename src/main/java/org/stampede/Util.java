@@ -1,5 +1,15 @@
 package org.stampede;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import org.stampede.model.Role;
+
 public class Util {
 	
 	public static boolean checkClass(String clazz) {
@@ -50,5 +60,40 @@ public class Util {
 	
 	public static String getFinalLabel(String fullyQualifiedName) {
 		return fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf('.') + 1).trim();
+	}
+
+	public static String scanZookeeper() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public static boolean isRegex(String input) {
+		boolean isRegex;
+		try {
+		  Pattern.compile(input);
+		  isRegex = true;
+		} catch (PatternSyntaxException e) {
+		  isRegex = false;
+		}
+		return isRegex;
+	}
+
+	public static byte[] binarySerialize(Object stu) throws IOException {
+        // Reference for stream of bytes
+        byte[] stream = null;
+        Object serializable;
+        if(stu instanceof Serializable) {
+        	serializable = stu;
+        } else {
+        	serializable = String.valueOf(stu);
+        }
+        // ObjectOutputStream is used to convert a Java object into OutputStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(serializable);
+        stream = baos.toByteArray();
+        baos.close();
+        oos.close();
+        return stream;
 	}
 }

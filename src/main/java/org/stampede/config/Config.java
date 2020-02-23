@@ -6,11 +6,14 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-public class Config {
+import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.ZooKeeperMain;
 
+public class Config {
+	private Byte[] original;
 	private Object result;
 	private Config parent;
-	private String path;
+	protected String path;
 	protected HashMap<String, Config> keyValuePairs;
 	private static final Pattern FILESPLITTER = Pattern.compile("\\.|/|\\\\");
 
@@ -72,12 +75,17 @@ public class Config {
 		HashMap<String, Object> toreturn = new HashMap<String, Object>();
 		for(Entry<String, Config> e : keyValuePairs.entrySet()) {
 			if(e.getValue().getResult() != null) {
-				toreturn.put(e.getKey(), e.getValue());
+				Config c = e.getValue();
+				toreturn.put(c.getPath(), c);
 			} else {
 				toreturn.putAll(e.getValue().flatten());
 			}
 		}
 		return toreturn;
+	}
+	
+	public void add(Config config) {
+		add(config.getPath(), config);
 	}
 
 	public void add(String key, Config config) {
@@ -87,10 +95,10 @@ public class Config {
 			LinkedList<String> keysegments = new LinkedList<String>(Arrays.asList(substrings));
 			finalResult = this.add(keysegments.pop(), null, keysegments);
 			config.parent = finalResult;
-			config.path = substrings[substrings.length - 1];
+			config.path = config.parent.path + "/" + substrings[substrings.length - 1];
 			finalResult.keyValuePairs.put(substrings[substrings.length - 1], config);
 		} else {
-			config.path = key;
+			config.path = config.parent.path + "/" + key;
 			this.keyValuePairs.put(key, config);
 		}
 	}
@@ -100,7 +108,7 @@ public class Config {
 			if (!keyValuePairs.containsKey(key)) {
 				config = new Config();
 				config.parent = this;
-				config.path = key;
+				config.path = config.parent.path + "/" + key;
 				keyValuePairs.put(key, config);
 			} else {
 				config = keyValuePairs.get(key);
@@ -111,8 +119,17 @@ public class Config {
 		}
 	}
 	
+	public String getPath() {
+		return path;
+	}
+	
 	protected void delete() {
 		this.parent.keyValuePairs.remove(this.path);
 		this.keyValuePairs.clear();
+	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(this.getResult());
 	}
 }
