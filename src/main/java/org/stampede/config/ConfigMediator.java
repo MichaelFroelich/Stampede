@@ -112,9 +112,9 @@ public class ConfigMediator extends Config implements AutoCloseable {
 		} else {
 			try (Reader stream = Files.newBufferedReader(p, Charset.defaultCharset())) {
 				// Make the root of this config relative to the root of all configs
-				String root = stripExtension(localPath.relativize(p).toString());
-				Config newconfig = new Config(p, this, root);
-				if (!KEEPERPATTERN.matcher(root).find()) {
+				if (!KEEPERPATTERN.matcher(p.toString()).find()) {
+					String root = stripExtension(localPath.relativize(p).toString());
+					Config newconfig = new Config(p, this, root);
 					String extension = getExtension(root).toLowerCase();
 					IConfigDeserializer implementation = deserializer;
 					try {
@@ -232,6 +232,6 @@ public class ConfigMediator extends Config implements AutoCloseable {
 	}
 
 	public Location getLocation() {
-		return location;
+		return null;
 	}
 }

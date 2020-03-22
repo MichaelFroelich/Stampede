@@ -240,6 +240,8 @@ public class Stampede implements AutoCloseable, Watcher {
 		for(Youngling youngun : this.barn.all()) {
 			for(ConfigMediator cm : youngun.getConfigs()) {
 				if(cm.getLocation() == Location.ZooKeeper) {
+					
+				}
 			}
 		}
 		//TODO:

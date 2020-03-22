@@ -60,6 +60,7 @@ public enum Location {
 	}	
 	
 	public static Location getLocation (IConfigLocation iConfigLocation) {
+		return null;
 		
 	}
 	

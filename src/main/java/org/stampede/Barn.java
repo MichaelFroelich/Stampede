@@ -1,5 +1,6 @@
 package org.stampede;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.stampede.youngling.Pup;
@@ -18,6 +19,7 @@ public final class Barn {
 	private List<Youngling> all;
 
 	Barn(Stampede stampede) {
+		all = new ArrayList<Youngling>();
 		this.stampede = stampede;
 	}
 	
