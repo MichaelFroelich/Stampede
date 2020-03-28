@@ -96,7 +96,7 @@ public class StampedeTest {
 	public void start() throws Exception {
 
 		// Initialize all stampede related stuff
-		Stampede stampede = new Stampede("src/test/resources/common/test/stampede.properties");
+		Stampede stampede = Stampede.getInstance("src/test/resources/common/test/stampede.properties");
 
 		// Create a stampede user instance that managers configs and performs role
 		// negotiation/election

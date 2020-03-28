@@ -57,10 +57,6 @@ public class Util {
 		}
 		return className;
 	}
-	
-	public static String getFinalLabel(String fullyQualifiedName) {
-		return fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf('.') + 1).trim();
-	}
 
 	public static String scanZookeeper() {
 		// TODO Auto-generated method stub
@@ -81,19 +77,40 @@ public class Util {
 	public static byte[] binarySerialize(Object stu) throws IOException {
         // Reference for stream of bytes
         byte[] stream = null;
-        Object serializable;
-        if(stu instanceof Serializable) {
-        	serializable = stu;
-        } else {
-        	serializable = String.valueOf(stu);
-        }
         // ObjectOutputStream is used to convert a Java object into OutputStream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(serializable);
+        if(stu instanceof Serializable) {
+        	oos.writeObject(stu);
+        } else {
+        	oos.writeChars(String.valueOf(stu));
+        }
         stream = baos.toByteArray();
         baos.close();
         oos.close();
         return stream;
 	}
+	
+	public static String getExtension(String str) {
+		if (str == null)
+			return null;
+		int pos = str.lastIndexOf(".");
+		if (pos == -1)
+			return "";
+		return str.substring(pos + 1, str.length());
+	}
+
+	public static String stripExtension(String str) {
+		if (str == null)
+			return null;
+		int pos = str.lastIndexOf(".");
+		if (pos == -1)
+			return str;
+		return str.substring(0, pos);
+	}
+	
+	public static String getFinalLabel(String fullyQualifiedName) {
+		return getExtension(fullyQualifiedName);
+	}
+
 }

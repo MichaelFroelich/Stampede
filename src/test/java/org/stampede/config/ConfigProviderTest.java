@@ -40,8 +40,6 @@ public class ConfigProviderTest {
 		Thread.sleep(1001); //wait just over a second
 		applicationName = (String) testConfig.get("newconfig").get("config").getResult();
 		assertEquals("now for something completely different", applicationName);
-		
-		configProvider.close();
 	}
 	
 

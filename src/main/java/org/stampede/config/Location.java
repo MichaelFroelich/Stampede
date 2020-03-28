@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.stampede.Util;
-import org.stampede.config.location.IConfigLocation;
-import org.stampede.config.location.LocalLocation;
+import org.stampede.config.location.*;
 
 /**
  * @author Michael
@@ -21,7 +20,7 @@ public enum Location {
     	JGit(Git),
     	JavaGit(Git),
     Local(null, null, LocalLocation.class),
-    ZooKeeper(null);
+    ZooKeeper(null, null, ZookeeperLocation.class);
 	
 	private Location parent = null;
 	
@@ -64,7 +63,7 @@ public enum Location {
 		
 	}
 	
-	IConfigLocation getInstance() throws InstantiationException, IllegalAccessException {
+	public IConfigLocation getInstance() throws InstantiationException, IllegalAccessException {
 		Location[] children = children();
 		if(children.length != 0) {
 			for(Location child : children) {

@@ -12,6 +12,8 @@ import org.stampede.config.Config;
 public class StampedeConfig {
 	private static final String DATADIR = "dataDir";
 	private static final String DATADIR_DEFAULT = "/tmp";
+	private static final String STAMPEDE_TEMP_DIRECTORY = "stampede.tempDirectory";
+	private static final String STAMPEDE_TEMP_DIRECTORY_DEFAULT = DATADIR_DEFAULT + "/stampede";
 	private static final String STAMPEDE_SOCKET = "stampede.socket";
 	private static final String STAMPEDE_CLIENTPORT = "stampede.clientPort";
 	private static final String STAMPEDE_CLIENTPORT_DEFAULT = "1024";
@@ -41,6 +43,10 @@ public class StampedeConfig {
 
 	public static void init(Config internalConfig) {
 		_internalConfig = internalConfig;
+	}
+	
+	public static String getTemporaryDirectory() {
+		return get(STAMPEDE_TEMP_DIRECTORY, STAMPEDE_TEMP_DIRECTORY_DEFAULT);
 	}
 
 	public static String getConnectionString() {

@@ -1,5 +1,6 @@
 package org.stampede.config;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -53,7 +54,7 @@ public class Config {
 		this.parent = parent;
 	}
 
-	public final Config get(String root) {
+	public Config get(String root) {
 		if (root.contains(".") || root.contains("/") || root.contains("\\")) {
 			String[] substrings = FILESPLITTER.split(root);
 			LinkedList<String> keysegments = new LinkedList<String>(Arrays.asList(substrings));
@@ -74,12 +75,13 @@ public class Config {
 	public HashMap<String, Object> flatten() {
 		HashMap<String, Object> toreturn = new HashMap<String, Object>();
 		for(Entry<String, Config> e : keyValuePairs.entrySet()) {
-			if(e.getValue().getResult() != null) {
-				Config c = e.getValue();
-				toreturn.put(c.getPath(), c);
-			} else {
-				toreturn.putAll(e.getValue().flatten());
+			Config value = e.getValue();
+			HashMap<String, Object> flattened = value.flatten();
+			if(!flattened.isEmpty()) {
+				toreturn.putAll(flattened);
 			}
+			Config c = e.getValue();
+			toreturn.put(c.getPath(), c);
 		}
 		return toreturn;
 	}

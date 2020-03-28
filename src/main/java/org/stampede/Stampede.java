@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -19,12 +18,10 @@ import org.apache.zookeeper.data.Stat;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stampede.config.Config;
-import org.stampede.config.ConfigMediator;
-import org.stampede.config.Deserializer;
-import org.stampede.config.Location;
-import org.stampede.config.Socket;
+import org.stampede.config.*;
 import org.stampede.config.deserializer.IConfigDeserializer;
+import org.stampede.config.location.IConfigLocation;
+import org.stampede.config.location.ZookeeperLocation;
 import org.stampede.model.Role;
 import org.stampede.socket.AbstractSocket;
 import static org.stampede.StampedeConfig.*;
@@ -37,14 +34,36 @@ public class Stampede implements AutoCloseable, Watcher {
 	private boolean started;
 	private Barn barn;
 	private Config initConfig;
-	private EmbeddedZookeeper zookeeper;
-	private CuratorFramework curator;
+	private static EmbeddedZookeeper zookeeper;
+	private static CuratorFramework curator;
+	private static Stampede stampede;
 
+	public static Stampede getInstance() {
+		if(stampede == null) {
+			stampede = new Stampede();
+		}
+		return stampede;
+	}
+	
+	public static Stampede getInstance(String whatever) {
+		if(stampede == null) {
+			stampede = new Stampede(whatever);
+		}
+		return stampede;
+	}
+	
+	public CuratorFramework getCurator() {
+		if(curator == null) {
+			curator = startZookeeperClient();
+		}
+		return curator;
+	}
+	
 	/**
 	 * Create an instance of Stampede Assumes all configs are already loaded into
 	 * the system properties
 	 */
-	public Stampede() {
+	Stampede() {
 		this(null);
 	}
 
@@ -53,7 +72,7 @@ public class Stampede implements AutoCloseable, Watcher {
 	 * 
 	 * @param path to an initial configuration directory
 	 */
-	public Stampede(String path) {
+	Stampede(String path) {
 		if (path != null)
 			init(path);
 		barn = new Barn(this);
@@ -87,7 +106,6 @@ public class Stampede implements AutoCloseable, Watcher {
 			switch (extension){
 				case "properties":
 					IConfigDeserializer deserialiser = Deserializer.Properties.getInstance();
-					Properties prop = new Properties();
 					Reader targetReader = Files.newBufferedReader(Paths.get(path), Charset.defaultCharset());
 					initConfig = deserialiser.load(targetReader, new Config());
 					for (Entry<String, Object> property : initConfig.flatten().entrySet()) {
@@ -239,12 +257,12 @@ public class Stampede implements AutoCloseable, Watcher {
 	public void process(WatchedEvent event) {
 		for(Youngling youngun : this.barn.all()) {
 			for(ConfigMediator cm : youngun.getConfigs()) {
-				if(cm.getLocation() == Location.ZooKeeper) {
-					
+				IConfigLocation location = cm.getLocation();
+				if(location instanceof ZookeeperLocation) {
+					((ZookeeperLocation) location).process(event);
 				}
 			}
 		}
-		//TODO:
 	}
 	
 	CuratorFramework getCuratorClient(){

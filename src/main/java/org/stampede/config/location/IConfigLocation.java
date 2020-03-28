@@ -1,6 +1,8 @@
 package org.stampede.config.location;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,10 +18,15 @@ public interface IConfigLocation {
 	/**
 	 * Should register all files recursively within a path
 	 * 
-	 * @param path
+	 * @param config
 	 * @return local copies of files that have successfully registered
 	 */
-	public List<Path> register(ConfigMediator path);
+	default public List<Path> register(ConfigMediator config) {
+		ArrayList<Path> toreturn = new ArrayList<Path>(1);
+		toreturn.add(Paths.get(getTemporaryDirectory()));
+		return toreturn;
+	}
+	
 
 	/**
 	 * 

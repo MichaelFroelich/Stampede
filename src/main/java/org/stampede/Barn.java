@@ -3,6 +3,7 @@ package org.stampede;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.stampede.youngling.Calf;
 import org.stampede.youngling.Pup;
 
 /**
@@ -58,6 +59,8 @@ public final class Barn {
 	 * @return Calf
 	 */
 	public Youngling adoptCalf() {
-		return null;
+		Youngling y = new Calf(stampede);
+		all.add(y);
+		return y;
 	}
 }
