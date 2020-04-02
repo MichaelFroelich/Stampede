@@ -1,16 +1,20 @@
 package org.stampede.config;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-public class Config {
+import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.ZooKeeperMain;
 
+public class Config {
+	private Byte[] original;
 	private Object result;
 	private Config parent;
-	private String path;
+	protected String path;
 	protected HashMap<String, Config> keyValuePairs;
 	private static final Pattern FILESPLITTER = Pattern.compile("\\.|/|\\\\");
 
@@ -50,7 +54,7 @@ public class Config {
 		this.parent = parent;
 	}
 
-	public final Config get(String root) {
+	public Config get(String root) {
 		if (root.contains(".") || root.contains("/") || root.contains("\\")) {
 			String[] substrings = FILESPLITTER.split(root);
 			LinkedList<String> keysegments = new LinkedList<String>(Arrays.asList(substrings));
@@ -71,13 +75,19 @@ public class Config {
 	public HashMap<String, Object> flatten() {
 		HashMap<String, Object> toreturn = new HashMap<String, Object>();
 		for(Entry<String, Config> e : keyValuePairs.entrySet()) {
-			if(e.getValue().getResult() != null) {
-				toreturn.put(e.getKey(), e.getValue());
-			} else {
-				toreturn.putAll(e.getValue().flatten());
+			Config value = e.getValue();
+			HashMap<String, Object> flattened = value.flatten();
+			if(!flattened.isEmpty()) {
+				toreturn.putAll(flattened);
 			}
+			Config c = e.getValue();
+			toreturn.put(c.getPath(), c);
 		}
 		return toreturn;
+	}
+	
+	public void add(Config config) {
+		add(config.getPath(), config);
 	}
 
 	public void add(String key, Config config) {
@@ -87,10 +97,10 @@ public class Config {
 			LinkedList<String> keysegments = new LinkedList<String>(Arrays.asList(substrings));
 			finalResult = this.add(keysegments.pop(), null, keysegments);
 			config.parent = finalResult;
-			config.path = substrings[substrings.length - 1];
+			config.path = config.parent.path + "/" + substrings[substrings.length - 1];
 			finalResult.keyValuePairs.put(substrings[substrings.length - 1], config);
 		} else {
-			config.path = key;
+			config.path = config.parent.path + "/" + key;
 			this.keyValuePairs.put(key, config);
 		}
 	}
@@ -100,7 +110,7 @@ public class Config {
 			if (!keyValuePairs.containsKey(key)) {
 				config = new Config();
 				config.parent = this;
-				config.path = key;
+				config.path = config.parent.path + "/" + key;
 				keyValuePairs.put(key, config);
 			} else {
 				config = keyValuePairs.get(key);
@@ -111,8 +121,17 @@ public class Config {
 		}
 	}
 	
+	public String getPath() {
+		return path;
+	}
+	
 	protected void delete() {
 		this.parent.keyValuePairs.remove(this.path);
 		this.keyValuePairs.clear();
+	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(this.getResult());
 	}
 }

@@ -1,5 +1,15 @@
 package org.stampede;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import org.stampede.model.Role;
+
 public class Util {
 	
 	public static boolean checkClass(String clazz) {
@@ -47,8 +57,60 @@ public class Util {
 		}
 		return className;
 	}
+
+	public static String scanZookeeper() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public static boolean isRegex(String input) {
+		boolean isRegex;
+		try {
+		  Pattern.compile(input);
+		  isRegex = true;
+		} catch (PatternSyntaxException e) {
+		  isRegex = false;
+		}
+		return isRegex;
+	}
+
+	public static byte[] binarySerialize(Object stu) throws IOException {
+        // Reference for stream of bytes
+        byte[] stream = null;
+        // ObjectOutputStream is used to convert a Java object into OutputStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        if(stu instanceof Serializable) {
+        	oos.writeObject(stu);
+        } else {
+        	oos.writeChars(String.valueOf(stu));
+        }
+        stream = baos.toByteArray();
+        baos.close();
+        oos.close();
+        return stream;
+	}
+	
+	public static String getExtension(String str) {
+		if (str == null)
+			return null;
+		int pos = str.lastIndexOf(".");
+		if (pos == -1)
+			return "";
+		return str.substring(pos + 1, str.length());
+	}
+
+	public static String stripExtension(String str) {
+		if (str == null)
+			return null;
+		int pos = str.lastIndexOf(".");
+		if (pos == -1)
+			return str;
+		return str.substring(0, pos);
+	}
 	
 	public static String getFinalLabel(String fullyQualifiedName) {
-		return fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf('.') + 1).trim();
+		return getExtension(fullyQualifiedName);
 	}
+
 }

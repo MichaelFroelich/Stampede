@@ -22,10 +22,8 @@ public class LocalLocation implements IConfigLocation {
 
 	@Override
 	public List<Path> register(ConfigMediator config) {
-		Path path = config.getLocalPath();
 		List<Path> paths = null;
-
-		try (Stream<Path> walk = Files.walk(path)) {
+		try (Stream<Path> walk = Files.walk(config.getLocationPath())) {
 			if (watchService == null)
 				watchService = FileSystems.getDefault().newWatchService();
 
